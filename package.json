@@ -1,0 +1,25 @@
+{
+  "name": "xpl-syntax",
+  "version": "1.0.0",
+  "description": "antlr4 definition of xpl syntax",
+  "type": "module",
+  "main": "test.js",
+  "scripts": {
+    "test": "node test.js",
+    "lint": "eslint .",
+    "getAntlr": "wget --show-progress -P syntax/ https://www.antlr.org/download/antlr-4.13.0-complete.jar",
+    "bind": "cd syntax && java -jar ./antlr-4.13.0-complete.jar -Dlanguage=JavaScript -o bindings xplLexer.g4 xplParser.g4",
+    "tree": "antlr4-parse ./syntax/xplLexer.g4 ./syntax/xplParser.g4 parse ./test/test.xpl -tree",
+    "gui": "antlr4-parse ./syntax/xplLexer.g4 ./syntax/xplParser.g4 parse ./test/test.xpl -gui"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xplanguage/xpl-syntax.git"
+  },
+  "author": "frithsun",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xplanguage/xpl-syntax/issues"
+  },
+  "homepage": "https://github.com/xplanguage/xpl-syntax#readme"
+}
