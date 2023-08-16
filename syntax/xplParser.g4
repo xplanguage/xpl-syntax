@@ -9,33 +9,66 @@ parse: hashBangs? (patchDef | formulaic)* EOF;
 hashBangs: hashBang hashBang*;
 hashBang: HashBang;
 
-patchDef: match Assign (
+patchDef: match (BraceOpen patchParent BraceClose)?
+(
 	  (ParenOpen batch ParenClose) (CurlyOpen hatch CurlyClose)
 	  | (ParenOpen batch ParenClose)
 	  | (CurlyOpen hatch CurlyClose)
 );
+patchParent: field | typeNative;
 
-match: label | formulaic | formulaCall | pattern | path;
+match: ((label | field | number | string | formulaCall | pattern | null ) Assign Assign) | path;
 pattern: patternEasy | patternHard | patternOpen;
 
-path: Path;
+batch: batchItem+;
+batchItem: type? protect? priv? batchLabel mutable? nullable? unique? (Assign (formulaic | formulaDef | table | null))?;
+protect: Bang;
+priv: Bang;
+mutable: Bang;
+nullable: Bang;
+unique: Star;
+batchLabel: Label;
+null: Null;
 
-batch: Label;
+formulaDef: (ParenOpen batch ParenClose)? CurlyOpen formulaicPiped CurlyClose;
 
-hatch: formulaic+;
+type: typeTable | typeBool | typeString | typeCustom;
+typeNative: typeTable | typeBool | typeString;
+typeTable: TypeTable;
+typeBool: TypeBool;
+typeString: TypeString;
+typeCustom: TypeCustom typeLabel;
+typeLabel: Label;
 
-formulaic: formulaCall | field | number | string;
+hatch: formulaicPiped+;
 
-formulaCall: field ParenOpen formulaCallItem* ParenClose piped?;
+formulaicPiped: alias? formulaic piped?;
+alias: Label Assign;
+formulaic: (parentCall? formulaCall) | (parentCall? field) | number | string | table;
+parentCall: ParentCall;
+
+formulaCall: formulaLabel exceptional? formulaCallItem* ParenClose;
+formulaLabel: (field ParenOpen | FormulaChar+);
 formulaCallItem: (label Assign)? formulaic;
-field: (label Dot)? label;
-piped: Pipe formulaic;
+field: (module Dot)? label;
+module: Label;
+piped: Pipe alias? formulaicPiped;
+
+exceptional: match Assign (CurlyOpen formulaic CurlyClose)?;
+
+table: (ParenOpen batch ParenClose)? (TableOpen formulaic* TableClose)+;
 
 number: decimalInteger | decimal | hexInteger | octalInteger;
 decimalInteger: DecimalInteger;
 decimal: Decimal;
 hexInteger: HexInteger;
 octalInteger: OctalInteger;
+
+path: P_Open (pathPart | pathDirect| pathDig | pathField)* P_Close;
+pathPart: P_Part+;
+pathDirect: P_Dir;
+pathDig: P_Dig;
+pathField: P_FieldOpen formulaic? CurlyClose;
 
 patternEasy: PE_Open (patternEasyPart | patternEasyField)* PE_Close;
 patternEasyPart: PE_Part+;

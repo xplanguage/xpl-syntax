@@ -7,17 +7,35 @@ channels {
 
 HashBang: '#!' ~[\r\n\p{Zl}]*;
 
-// TODO: do this right
-Path: '/' ('\\' ':' | ~[:])+;
+BraceOpen: '<';
+BraceClose: '>';
 
 ParenOpen: '(';
 ParenClose: ')';
+
+TableOpen: '[';
+TableClose: ']';
+
+FormulaChar: [-~!@#$%^&_+*=<>?/]+ ParenOpen;
+
+Null: '@@';
+
+Star: '*';
+
+Bang: '!';
 
 Assign: ':';
 
 Pipe: '|';
 
 Dot: '.';
+
+ParentCall: '\\';
+
+TypeTable: '#';
+TypeBool: '&';
+TypeString: '$';
+TypeCustom: '@';
 
 HexInteger: '-'? '0' [xX] HexDigit (HexDigit | '_')*;
 
@@ -34,7 +52,7 @@ Decimal:
         | DecimalInteger ExponentPart?
     )?;
 
-Label: [\p{L}-] [\p{L}\p{N}_-]*;
+Label: [\p{L}_-] [\p{L}\p{N}_-]*;
 
 fragment DecimalDigit: [0-9];
 fragment HexDigit: [0-9a-fA-F];
@@ -49,11 +67,22 @@ Annotation: '#: ' ~[\r\n\p{Zl}]+ -> channel(ANNOTATIONS);
 CurlyOpen: '{' -> pushMode(DEFAULT_MODE);
 CurlyClose: '}' -> popMode;
 
+P_Open: '/' -> pushMode(PATH);
 PE_Open: '\'' -> pushMode(PATTERN_EASY);
 PH_Open: '"' -> pushMode(PATTERN_HARD);
 PO_Open: '^' -> pushMode(PATTERN_OPEN);
 
 StringOpen: '`' -> pushMode(STRING);
+
+mode PATH;
+P_Part: P_Literal+;
+P_Dig: '//';
+P_Dir: '/';
+P_Esc: '\\:';
+P_FieldEsc: '\\{';
+P_FieldOpen: '{' -> pushMode(DEFAULT_MODE);
+P_Literal: P_Esc | P_FieldEsc | ~[/:{];
+P_Close: ':' -> popMode;
 
 mode PATTERN_EASY;
 PE_Part: PE_Literal+;
