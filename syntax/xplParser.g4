@@ -17,7 +17,7 @@ patchDef: match (BraceOpen patchParent BraceClose)?
 );
 patchParent: field | typeNative;
 
-match: ((label | field | number | string | formulaCall | pattern | null ) Assign Assign) | path;
+match: (((label | field | number | string | formulaCall | pattern | null ) Assign) | path) Assign;
 pattern: patternEasy | patternHard | patternOpen;
 
 batch: batchItem+;
@@ -54,7 +54,7 @@ field: (module Dot)? label;
 module: Label;
 piped: Pipe alias? formulaicPiped;
 
-exceptional: match Assign (CurlyOpen formulaic CurlyClose)?;
+exceptional: match (CurlyOpen formulaic CurlyClose)?;
 
 table: (ParenOpen batch ParenClose)? (TableOpen formulaic* TableClose)+;
 
