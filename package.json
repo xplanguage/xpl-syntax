@@ -1,6 +1,6 @@
 {
-  "name": "@xplang/xpl-syntax",
-  "version": "1.0.1",
+  "name": "@xplanguage/xpl-syntax",
+  "version": "1.0.2",
   "description": "antlr4 definition of xpl syntax",
   "type": "module",
   "main": "test.js",
