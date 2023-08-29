@@ -131,3 +131,4 @@ dist
 
 # xpl-syntax
 package-lock.json
+syntax/antlr-*.jar
